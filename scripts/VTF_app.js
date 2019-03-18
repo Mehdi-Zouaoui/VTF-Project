@@ -1,8 +1,8 @@
 
 
 const game = new Phaser.Game(
-    window.innerWidth,
-    window.innerHeight,
+    800,
+    1000,
     Phaser.AUTO,
     'game-root',
     {
@@ -24,15 +24,17 @@ function preload() {
     // game.scale.pageAlignVertically = true;
     // game.stage.backgroundColor = '#eee';
     game.load.image('ball', 'asset/img/ball.png');
-    game.load.image('pnj_1', 'asset/img/pnj_giroud.png', 100 ,33);
+    game.load.image('pnj_1', 'asset/img/pnj_giroud.png')    ;
     game.load.image('pnj_2', 'asset/img/pnj_kante.png');
     game.load.image('pnj_3', 'asset/img/pnj_koscieny.png');
+    game.load.image('pnj_4', 'asset/img/pnj_pogba.png');
     
 };
 
 function create() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
-
+    
+    
     
  
 
@@ -41,15 +43,29 @@ function create() {
 
     // Génération des briques
     for (let y = 0; y < 1; y++) {
-        for (let x = 0; x < 3; x++) {
-            let sprite = new Phaser.Sprite(game, x * 100 + (game.world.width - 1000) / 2, y * Math.floor(Math.random() * (game.world.height - 100)) + 10 ,'pnj_' + (x % 10 + 1));
+        for (let x = 0; x < 4; x++) {
+            let sprite = new Phaser.Sprite(game, x * game.world.width/4 + 100, Math.floor(Math.random(20 - 0))    ,'pnj_' + (x % 10 + 1));
+             
+             //sprite.createMultiple(200, 'pnj_' + ( x % 10 + 1), 0, false);
+
             // sprite.scale.setTo(0.2604, 0.2604); 
             PNJGroup.add(sprite);
+            game.physics.enable(sprite, Phaser.Physics.ARCADE);
+           // sprite.body.velocity.x = game.rnd.integerInRange(-200, 200);
+            sprite.body.velocity.y = game.rnd.integerInRange(200, 1000);
+            
+          
+                checkBounds(PNJGroup);
+
+            
         }
     }
     PNJGroup.forEach(item => {
-        item.body.immovable = true;
+        item.body.movable = true;
+
     });
+    
+    
 
     // Création de la balle
     ball = game.add.sprite(game.world.width / 2, game.world.height - 100, 'ball');
@@ -65,8 +81,8 @@ function create() {
     
     // Création du pad
     pad = game.add.sprite(game.world.width / 2, game.world.height - 5, 'ball');
-    pad.scale.setTo(0.5,0.5);
-    pad.anchor.set(0.5, 1);
+    pad.scale.setTo(-1,-1);
+    pad.anchor.set(0.5, 0,5);
     game.physics.arcade.enable(pad);
     pad.body.immovable = true;
 
@@ -84,9 +100,28 @@ function create() {
 }
 
 function update() {
+   
+
+    //console.log(PNJGroup);
+    PNJGroup.forEach(item => {
+       //console.log(item.position.y);
+       if(item.position.y > window.innerHeight){
+
+        item.position.y = 0;
+        //item.body.velocity.y += 1;
+
+       }
+
+      // game.physics.arcade.collide(item, collisionHandler, null, this);
+        
+    });
+    
     
     let graphics = null;
-
+    //PNJGroup.angle += 1;
+   // pad.angle +=50;
+    //ball.angle += 10;
+    
   //  game.physics.arcade.collide(ball, PNJGroup, ballHitBrick);
     
     game.physics.arcade.collide(ball, pad, ballHitPad);
@@ -116,6 +151,16 @@ function update() {
 
     
    
+}
+
+
+function checkBounds(PNJGroup) {
+
+    if (PNJGroup.y > 500)
+    {
+        PNJGroup.kill();
+    }
+
 }
 
 function render() {
