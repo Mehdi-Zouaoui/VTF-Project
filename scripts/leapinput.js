@@ -45,7 +45,7 @@ controller.on('frame' , function(frame){
                 break;
             case "keyTap":
                 console.log("Key Tap Gesture");
-                
+
                 break;
             case "screenTap":
                 console.log("Screen Tap Gesture");
@@ -73,7 +73,7 @@ function get2dCoords(leapPosition, frame) {
 function renderCircle(gesture ) {
     const radius = gesture.radius;
    
-    console.log("Circle");
+    //console.log("Circle");
 
     return {
         radius : radius,
