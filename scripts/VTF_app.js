@@ -14,7 +14,7 @@ const game = new Phaser.Game(
     }
 );
 
-let ball;
+//let ball;
 let pad;
 let PNJGroup;
 let timerText, timer = 0;
@@ -33,11 +33,15 @@ function preload() {
     
 };
 
+let counter = 50;
+let text = 0;
+
 function create() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
     game.world.setBounds(0,0, 800, window.innerHeight);
     
-    
+ 
+
     const terrain = game.add.image(game.world.centerX, game.world.centerY, 'terrain');
     terrain.anchor.set(0.5);
     terrain.scale.setTo(1 , 0.9);
@@ -101,6 +105,11 @@ function create() {
     // Timing
     timerText = game.add.text(5, 5, 'Temps: 0.0s', { font: '18px Arial', fill: '#ffff00' });
     setInterval(() => timer += 100, 100);
+
+    text = game.add.text(game.world.centerX, game.world.centerY, 'Counter: 0', { font: "64px Arial", fill: "#ffffff", align: "center" });
+    text.anchor.setTo(0.5, 0.5);
+
+    game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
 }
 
 function update() {
@@ -135,8 +144,6 @@ function update() {
     pad.x  =  LEAP.position.x ;
     pad.y  = LEAP.position.y ; 
     pad.radius = LEAP.position.radius;
-   
-    
     
     graphics = game.add.graphics();
    
@@ -171,7 +178,7 @@ function render() {
 
 }
 
-function ballHitBrick(ball, brick) {
+/**  function ballHitBrick(ball, brick) {
     brick.kill();
 
     const remainingBalls = PNJGroup.children.reduce((total, brick) => brick.alive ? total + 1 : total, 0);
@@ -181,7 +188,43 @@ function ballHitBrick(ball, brick) {
     }
 }
 
-function ballHitPad(ball, pad) {
-    ball.body.velocity.x = -1 * 5 * (pad.x - ball.x);
-}
 
+ function ballHitPad(ball, pad) {
+    ball.body.velocity.x = -1 * 5 * (pad.x - ball.x);
+}*/
+
+function updateCounter() {
+
+    counter--;
+
+    text.setText('Counter: ' + counter);
+
+}
+function gestures_qte( countdown , gesture_coutdown , gesture_type){
+
+   if(countdown > 0){
+
+   for(i = 0 ; i < gesture_coutdown ; i++){
+
+    switch(gesture_type){
+        case " circle":
+        
+        graphics.beginFill(0xFF0000, 1);
+        graphics.drawCircle(pad.x, pad.y, pad.radius);
+        break;
+        case "swipe ":
+
+
+        break;
+
+
+        case "keyTap":
+
+
+        break;
+    
+  }
+  }
+  
+};
+}
