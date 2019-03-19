@@ -33,7 +33,7 @@ function preload() {
     
 };
 
-let counter = 50;
+let counter = 10;
 let text = 0;
 
 function create() {
@@ -103,10 +103,10 @@ function create() {
     }, this);
 */
     // Timing
-    timerText = game.add.text(5, 5, 'Temps: 0.0s', { font: '18px Arial', fill: '#ffff00' });
+    timerText = game.add.text(50, 5, 'Temps: 0.0s', { font: '18px Arial', fill: '#ffff00' });
     setInterval(() => timer += 100, 100);
 
-    text = game.add.text(game.world.centerX, game.world.centerY, 'Counter: 0', { font: "64px Arial", fill: "#ffffff", align: "center" });
+    text = game.add.text(680, 20, 'Counter: 0', { font: "20px Arial", fill: "#ffffff", align: "center" });
     text.anchor.setTo(0.5, 0.5);
 
     game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
@@ -196,8 +196,13 @@ function render() {
 function updateCounter() {
 
     counter--;
-
+    if(counter > 0 ){
     text.setText('Counter: ' + counter);
+    }
+    if (counter == 0){
+    text.setText('Counter: 0') ;
+    }
+    return counter;
 
 }
 function gestures_qte( countdown , gesture_coutdown , gesture_type){
