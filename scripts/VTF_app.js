@@ -109,11 +109,14 @@ function create() {
     text = game.add.text(680, 20, 'Counter: 0', { font: "20px Arial", fill: "#ffffff", align: "center" });
     text.anchor.setTo(0.5, 0.5);
 
-    game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
+    game.time.events.loop(Phaser.Timer.SECOND, updateCounter, text);
 }
 
 function update() {
    
+    game.physics.arcade.collide(pad,  PNJGroup, gestures_qte(updateCounter , 4 , "circle" ));
+    
+    
 
     //console.log(PNJGroup);
     PNJGroup.forEach(item => {
@@ -199,37 +202,56 @@ function updateCounter() {
     if(counter > 0 ){
     text.setText('Counter: ' + counter);
     }
+    /*if (counter == 5){
+    game.paused = true ;
+    }*/
     if (counter == 0){
     text.setText('Counter: 0') ;
     }
     return counter;
 
 }
-function gestures_qte( countdown , gesture_coutdown , gesture_type){
-
-   if(countdown > 0){
-
-   for(i = 0 ; i < gesture_coutdown ; i++){
-
-    switch(gesture_type){
-        case " circle":
-        
-        graphics.beginFill(0xFF0000, 1);
-        graphics.drawCircle(pad.x, pad.y, pad.radius);
-        break;
-        case "swipe ":
 
 
-        break;
+function gestures_qte(countdown, gesture_coutdown, gesture_type) {
+
+    return function (ball, pnj) {
+        if (countdown > 0) {
+
+            for (i = 0; i < gesture_coutdown; i++) {
+
+                switch (gesture_type) {
+                    case " circle":
+
+                        graphics.beginFill(0xFF0000, 1);
+                        graphics.drawCircle(pad.x, pad.y, pad.radius);
+                        break;
+                    case "swipe ":
 
 
-        case "keyTap":
+                        break;
 
 
-        break;
-    
-  }
-  }
-  
-};
+                    case "keyTap":
+
+
+                        break;
+
+                }
+            }
+
+        }
+
+    }
 }
+
+function ballHitBrick(pad, PNJGroup) {
+    //PNJGroup.kill();
+
+    const remainingBalls = PNJGroup.children.reduce((total, PNJGroup) => PNJGroup.alive ? total + 1 : total, 0);
+    if (remainingBalls === 0) {
+        window.document.write('perdu');
+        window.location.reload();
+    }
+}
+
