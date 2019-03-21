@@ -8,6 +8,21 @@ function Terrain () {
     this.terrain     = null;
     this.counterLoop = 0;
     this.currentLevel = 0;
+    this.test = 0;
+    this.pnj4 = null;
+    this.ball = {
+        
+
+        circle : null, 
+        swipe : null,
+        keyTap : null,
+
+    }
+    this.nb_occurence = 5;
+    this.counter_keyTap = 0;
+    this.counter_swipe = 0;
+    this.lvl_done= 0;
+
     this.levels = [
                         [
                             { joueur : 'pnj_1', vitesse : 100, qte : 'circle' },
@@ -20,6 +35,8 @@ function Terrain () {
                             { joueur : 'pnj_3', vitesse : 200, qte : 'swipe' },
                         ],
                     ];
+
+    //this.onPausedCallback = function() { console.log('PAUSED')}
 }
 
 Terrain.prototype.preload = function() {
@@ -56,9 +73,74 @@ Terrain.prototype.create = function() {
     // Timing
     this.timerText = this.game.add.text(50, 5, 'Temps: 0.0s', { font: '18px Arial', fill: '#ffff00' });
     setInterval(() => this.timer += 100, 100);
-    this.text = this.game.add.text(680, 20, 'Counter: 0', { font: "20px Arial", fill: "#ffffff", align: "center" });
-    this.text.anchor.setTo(0.5, 0.5);
+   
+  
+    //this.counterLoop.position.x -= 1;
+    this.game.state.onPausedCallback = () => {
+            
+        
+
+        this.text = this.game.add.text(window.innerWidth / 2  - 25, window.innerHeight/2  - 50, 'Counter: 0', { font: "20px Arial", fill: "#ffffff", align: "center" });
+        this.text.anchor.setTo(0.5, 0.5);
+       
+            this.pnj4 = this.game.add.sprite(500, 500, 'pnj_4');
+           
+            
+            this.ball.circle = LEAP.nb_circles;
+            this.ball.keyTap = LEAP.keyTap;
+            this.ball.swipe  = LEAP.swipe;
+            console.log("QTE");
+           
+    
+            
+    
+            
+    
+    if (this.ball.circle == this.nb_occurence || this.counter_swipe == this.nb_occurence || this.counter_keyTap == this.nb_occurence){
+       
+        //this.game.paused = false;
+        this.counter_keyTap = 0;
+        this.counter_swipe = 0;
+    }
+    
+
+    LEAP.keyTap = false ;
+    LEAP.swipe = false ;
+    //this.game.paused = false;
+            console.log('circle :' + this.ball.circle);
+
+    
+    }
+    this.game.state.onPauseUpdateCallback =() =>{
     this.counterLoop = this.game.time.events.loop(Phaser.Timer.SECOND, this.updateCounter.bind(this), this.text);
+    this.ball.x = game.input.x;
+    this.ball.y = game.input.y;
+    this.test += 1;
+    if(this.test == 100){
+        this.test = 0 ;
+        this.hited_pnj.kill();
+        this.pnj4.kill();
+        this.game.paused = false ;
+    }
+    
+   
+    if(this.ball.keyTap == true ){
+        this.counter_keyTap += 1;
+        
+        console.log(this.counter_keyTap);
+    }
+    if(this.ball.swipe == true ){
+        this.counter_swipe += 1;
+        console.log(this.counter_swipe);
+    }
+    console.log(this.test);
+    };
+    
+   
+    this.game.state.onResumedCallback = () => {
+        console.log('TERRAIN PLAY AGAIN!')
+        
+    }
 }
 
 Terrain.prototype.update = function() {
@@ -76,10 +158,21 @@ Terrain.prototype.update = function() {
     if (LEAP.connected === true) {
         this.ball.x      = LEAP.position.x;
         this.ball.y      = LEAP.position.y;
+    
+        //else this.game.state.start('terrain' , false );
     }
+    else this.ball.x = game.input.x;
+         this.ball.y = game.input.y;
 
     // Affichage du timer
     this.timerText.setText('Temps: ' + (this.timer / 1000).toFixed(1) + 's');
+
+    if(this.levels[this.lvl_done].length == 0){
+        this.lvl_done += 1;
+        this.initLevel(this.lvl_done);
+    
+}
+    
 }
 
 Terrain.prototype.render = function() {
@@ -125,6 +218,9 @@ Terrain.prototype.updateCounter = function() {
 Terrain.prototype.ballHitPNJ = function(ball, pnj) {
     // @todo : LANCER UN QTE sur "pnj.qte"
 
-    this.game.state.pause('terrain');
-    this.game.state.start('qte', true, true, { qte : pnj.qte });
+    this.game.paused = true;
+    this.hited_pnj = pnj;
+    
+    return this.hited_pnj;
+   // this.game.state.start('qte', true, true, { qte : pnj.qte });
 }

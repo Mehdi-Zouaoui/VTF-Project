@@ -7,6 +7,9 @@ const LEAP = {
     },
     connected: false,
     gesture_done: false,
+    nb_circles : 0,
+    swipe : false,
+    keyTap : false
 };
 
 const controller = new Leap.Controller({
@@ -35,22 +38,31 @@ controller.on('frame', function (frame) {
 
     frame.gestures.forEach(function (gesture) {
         switch (gesture.type) {
+        
             case "circle":
                 let circleProgress = gesture.progress;
                 let completeCircles = Math.floor(circleProgress);
+                LEAP.nb_circles = completeCircles;
                 LEAP.position.radius = gesture.radius;
                 break;
             case "keyTap":
-                console.log("Key Tap Gesture");
-
+              
+                LEAP.keyTap = true;
                 break;
-            case "screenTap":
+            /*case "screenTap":
                 console.log("Screen Tap Gesture");
-                break;
+                break;*/
             case "swipe":
-                console.log("Swipe Gesture");
+            let state = gesture.state; 
+                if(state == 'stop'){
+                LEAP.swipe = true; 
+                }
                 break;
+            default :
+                
         }
+        
+        
     });
 });
 
