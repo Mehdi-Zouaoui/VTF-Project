@@ -11,6 +11,8 @@ function Terrain () {
     this.test = 0;
     this.pnj4 = null;
     this.hited_tab = [];
+    this.pointeur = 0;
+    this.swipe = null;
     this.ball = {
         
 
@@ -75,6 +77,7 @@ Terrain.prototype.preload = function() {
     this.game.load.image('pnj_3', 'asset/img/pnj_koscieny.png');
     this.game.load.image('pnj_4', 'asset/img/pnj_pogba.png');
     this.game.load.image('terrain' , 'asset/img/terrain.png');
+    this.game.load.image('swipe' , 'asset/img/handswipe.png')
 }
 
 // Création de l'écran à la frame 1
@@ -100,8 +103,8 @@ Terrain.prototype.create = function() {
     //this.ball.body.collideWorldBounds = true;
 
     // Timing
-    this.timerText = this.game.add.text(50, 5, 'Temps: 0.0s', { font: '18px Arial', fill: '#ffff00' });
-    setInterval(() => this.timer += 100, 100);
+    this.timerText = this.game.add.text(50, 5, 'Temps: 0.0m', { font: '18px Arial', fill: '#ffff00' });
+    setInterval(() => this.timer += 20, 20);
    
     this.text = this.game.add.text(window.innerWidth / 2  - 25, window.innerHeight/2  - 50, 'Counter: 0', { font: "20px Arial", fill: "#ffffff", align: "center" });
     this.text.anchor.setTo(0.5, 0.5);
@@ -109,8 +112,12 @@ Terrain.prototype.create = function() {
     //this.counterLoop.position.x -= 1;
     this.game.state.onPausedCallback = () => {
             
-       
-            this.pnj4 = this.game.add.sprite(500, 500, 'pnj_4');
+       // console.log(this.levels[this.lvl_done].joueur);
+        //if(this.levels[this.lvl_done][this.pointeur].joueur == this.hited_pnj ){
+            
+        //}
+        this.handswipe = this.game.add.sprite(this.game.world.centerX -110 , this.game.world.centerY - 90, 'swipe')
+        this.handswipe.scale.setTo(0.5,0.5);
            
             
             this.ball.circle = LEAP.nb_circles;
@@ -141,18 +148,27 @@ Terrain.prototype.create = function() {
     this.game.state.onPauseUpdateCallback =() =>{
     
     this.counterLoop = this.game.time.events.loop(Phaser.Timer.SECOND, this.updateCounter.bind(this), this.text);
+    
     this.ball.x = game.input.x;
     this.ball.y = game.input.y;
     this.test += 1;
+    if(this.levels[this.lvl_done][this.pointeur].joueur == this.hited_pnj.key){
+   
+    console.log('yo');
+    }
     if(this.test == 100){
         this.test = 0 ;
        
         this.hited_tab.push(this.hited_pnj);
         
         // Supression des images et de la hitbox du pnj
+        //if(this.hited_pnj.key == this.levels[this.lvl_done].joueur){
+            
+        //}
+        
         this.hited_pnj.body = null;
         this.hited_pnj.kill();
-        this.pnj4.kill();
+        this.handswipe.kill();
 
         // Appel de la fonction onResumedCallback
         this.game.paused = false ;
@@ -176,13 +192,13 @@ Terrain.prototype.create = function() {
         console.log('TERRAIN PLAY AGAIN!')
         // Supression du conteur 
         this.text.kill();
-            
+       
              /*On conpare si les PNJs percutés son bien les joueurs du tableau
                 si c'est le cas on passe au niveau suivant et on reset le tableau
                 des PNJ percutés */
 
              if(this.levels[this.lvl_done].length == this.hited_tab.length){
-
+                console.log(this.levels[this.lvl_done].joueur)
                 this.hited_tab = [];
                 this.lvl_done += 1;
                 this.initLevel(this.lvl_done); 
@@ -215,7 +231,7 @@ Terrain.prototype.update = function() {
          this.ball.y = game.input.y;
 
     // Affichage du timer
-    this.timerText.setText('Temps: ' + (this.timer / 1000).toFixed(1) + 's');
+    this.timerText.setText('Temps: ' + (this.timer / 1000).toFixed(1) + 'm');
 
     // Pasage au niveau supérieur
   
