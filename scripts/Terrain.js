@@ -24,14 +24,14 @@ function Terrain () {
     this.lvl_done= 0;
 
     this.levels = [
-                        [
+                       [
                             { joueur : 'pnj_1', vitesse : 100, qte : 'circle' },
                         ],
-                        [
+                       [
                             { joueur : 'pnj_1', vitesse : 100, qte : 'circle' },
                             { joueur : 'pnj_2', vitesse : 100, qte : 'keyTap' },
                         ],
-                        [
+                       [
                             { joueur : 'pnj_3', vitesse : 200, qte : 'swipe' },
                         ],
                     ];
@@ -118,6 +118,7 @@ Terrain.prototype.create = function() {
     this.test += 1;
     if(this.test == 100){
         this.test = 0 ;
+        this.hited_pnj.body = null;
         this.hited_pnj.kill();
         this.pnj4.kill();
         this.game.paused = false ;
@@ -139,6 +140,11 @@ Terrain.prototype.create = function() {
    
     this.game.state.onResumedCallback = () => {
         console.log('TERRAIN PLAY AGAIN!')
+        if( this.levels[this.lvl_done].joueur == null){
+            this.lvl_done += 1;
+            this.initLevel(this.lvl_done);
+        
+    }
         
     }
 }
@@ -151,6 +157,7 @@ Terrain.prototype.update = function() {
     this.PNJGroup.forEach(item => {
         if (item.position.y + item.height > window.innerHeight) {
             // @todo : faire perdre un point
+           // score --;
         }
     });
 
@@ -167,11 +174,8 @@ Terrain.prototype.update = function() {
     // Affichage du timer
     this.timerText.setText('Temps: ' + (this.timer / 1000).toFixed(1) + 's');
 
-    if(this.levels[this.lvl_done].length == 0){
-        this.lvl_done += 1;
-        this.initLevel(this.lvl_done);
-    
-}
+    // Pasage au niveau supérieur
+  
     
 }
 
@@ -187,10 +191,10 @@ Terrain.prototype.render = function() {
 
 Terrain.prototype.initLevel = function(lvl) {
     // Suppression des éléments du groupe
-    this.PNJGroup.forEach(item => {
+    /*this.PNJGroup.forEach(item => {
         item.body = null;
         item.kill();
-    });
+    });*/
 
     // Création des joueurs de ce niveau dans le groupe
     for (let x = 0; x < this.levels[lvl].length; x++) {
