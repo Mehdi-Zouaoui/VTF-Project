@@ -3,13 +3,14 @@ function Terrain () {
     this.PNJGroup    = null;
     this.timerText   = 0;
     this.timer       = 0;
-    this.counter     = 10;
+    this.counter     = 100;
     this.text        = 0;
     this.terrain     = null;
     this.counterLoop = 0;
     this.currentLevel = 0;
     this.test = 0;
     this.pnj4 = null;
+    this.hited_tab = [];
     this.ball = {
         
 
@@ -22,7 +23,7 @@ function Terrain () {
     this.counter_keyTap = 0;
     this.counter_swipe = 0;
     this.lvl_done= 0;
-
+    // Niveaux du jeu 
     this.levels = [
                        [
                             { joueur : 'pnj_1', vitesse : 100, qte : 'circle' },
@@ -31,14 +32,41 @@ function Terrain () {
                             { joueur : 'pnj_1', vitesse : 100, qte : 'circle' },
                             { joueur : 'pnj_2', vitesse : 100, qte : 'keyTap' },
                         ],
-                       [
-                            { joueur : 'pnj_3', vitesse : 200, qte : 'swipe' },
+                        [
+                            { joueur : 'pnj_3', vitesse : 120, qte : 'circle' },
+                            { joueur : 'pnj_4', vitesse : 120, qte : 'keyTap' },
+                        ],
+                        [
+                            { joueur : 'pnj_3', vitesse : 110, qte : 'circle' },
+                            { joueur : 'pnj_4', vitesse : 150, qte : 'keyTap' },
+                            { joueur : 'pnj_2', vitesse : 120, qte : 'circle' },
+                           
+                        ],
+                        [
+                            { joueur : 'pnj_3', vitesse : 110, qte : 'circle' },
+                            { joueur : 'pnj_4', vitesse : 160, qte : 'keyTap' },
+                            { joueur : 'pnj_1', vitesse : 130, qte : 'circle' },
+                            { joueur : 'pnj_2', vitesse : 140, qte : 'keyTap' },
+                        ],
+                        [
+                            { joueur : 'pnj_3', vitesse : 120, qte : 'circle' },
+                            { joueur : 'pnj_4', vitesse : 120, qte : 'keyTap' },
+                        ],
+                        [
+                            { joueur : 'pnj_3', vitesse : 180, qte : 'circle' },
+                            { joueur : 'pnj_1', vitesse : 150, qte : 'keyTap' },
+                        ],
+                        [
+                            { joueur : 'pnj_3', vitesse : 120, qte : 'circle' },
+                            { joueur : 'pnj_4', vitesse : 120, qte : 'keyTap' },
+                            { joueur : 'pnj_1', vitesse : 200, qte : 'circle' },
+                            { joueur : 'pnj_2', vitesse : 200, qte : 'keyTap' },
                         ],
                     ];
 
     //this.onPausedCallback = function() { console.log('PAUSED')}
 }
-
+// Chargement des images du jeu 
 Terrain.prototype.preload = function() {
     this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     this.game.load.image('ball', 'asset/img/ball.png');
@@ -49,6 +77,7 @@ Terrain.prototype.preload = function() {
     this.game.load.image('terrain' , 'asset/img/terrain.png');
 }
 
+// Création de l'écran à la frame 1
 Terrain.prototype.create = function() {
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.game.world.setBounds(0,0, 800, window.innerHeight);
@@ -63,25 +92,23 @@ Terrain.prototype.create = function() {
     this.initLevel(this.currentLevel);
     
     // Création du ball
-    this.ball = this.game.add.sprite(this.game.world.width / 2, this.game.world.height - 5, 'ball');
+    this.ball = this.game.add.sprite(this.game.world.centerX , this.game.world.centerY , 'ball');
     this.ball.scale.setTo(0.2,0.2);
     this.ball.anchor.set(0.5, 0,5);
     this.game.physics.arcade.enable(this.ball);
-    this.ball.body.immovable = true;
-    this.ball.body.collideWorldBounds = true;
+    //this.ball.body.immovable = true;
+    //this.ball.body.collideWorldBounds = true;
 
     // Timing
     this.timerText = this.game.add.text(50, 5, 'Temps: 0.0s', { font: '18px Arial', fill: '#ffff00' });
     setInterval(() => this.timer += 100, 100);
    
-  
+    this.text = this.game.add.text(window.innerWidth / 2  - 25, window.innerHeight/2  - 50, 'Counter: 0', { font: "20px Arial", fill: "#ffffff", align: "center" });
+    this.text.anchor.setTo(0.5, 0.5);
+    
     //this.counterLoop.position.x -= 1;
     this.game.state.onPausedCallback = () => {
             
-        
-
-        this.text = this.game.add.text(window.innerWidth / 2  - 25, window.innerHeight/2  - 50, 'Counter: 0', { font: "20px Arial", fill: "#ffffff", align: "center" });
-        this.text.anchor.setTo(0.5, 0.5);
        
             this.pnj4 = this.game.add.sprite(500, 500, 'pnj_4');
            
@@ -112,15 +139,22 @@ Terrain.prototype.create = function() {
     
     }
     this.game.state.onPauseUpdateCallback =() =>{
+    
     this.counterLoop = this.game.time.events.loop(Phaser.Timer.SECOND, this.updateCounter.bind(this), this.text);
     this.ball.x = game.input.x;
     this.ball.y = game.input.y;
     this.test += 1;
     if(this.test == 100){
         this.test = 0 ;
+       
+        this.hited_tab.push(this.hited_pnj);
+        
+        // Supression des images et de la hitbox du pnj
         this.hited_pnj.body = null;
         this.hited_pnj.kill();
         this.pnj4.kill();
+
+        // Appel de la fonction onResumedCallback
         this.game.paused = false ;
     }
     
@@ -140,14 +174,23 @@ Terrain.prototype.create = function() {
    
     this.game.state.onResumedCallback = () => {
         console.log('TERRAIN PLAY AGAIN!')
-        if( this.levels[this.lvl_done].joueur == null){
-            this.lvl_done += 1;
-            this.initLevel(this.lvl_done);
-        
-    }
-        
+        // Supression du conteur 
+        this.text.kill();
+            
+             /*On conpare si les PNJs percutés son bien les joueurs du tableau
+                si c'est le cas on passe au niveau suivant et on reset le tableau
+                des PNJ percutés */
+
+             if(this.levels[this.lvl_done].length == this.hited_tab.length){
+
+                this.hited_tab = [];
+                this.lvl_done += 1;
+                this.initLevel(this.lvl_done); 
+             }
+               
     }
 }
+
 
 Terrain.prototype.update = function() {
     // Ecoute des collisions entre la balle et les joueurs
@@ -198,7 +241,7 @@ Terrain.prototype.initLevel = function(lvl) {
 
     // Création des joueurs de ce niveau dans le groupe
     for (let x = 0; x < this.levels[lvl].length; x++) {
-        let sprite = new Phaser.Sprite(this.game, Math.random() * this.game.world.width, -150, this.levels[lvl][x].joueur);
+        let sprite = new Phaser.Sprite(this.game, Math.random() * (this.game.world.width - 50) +50 , -150, this.levels[lvl][x].joueur);
         sprite.scale.setTo(0.7,0.7);
         this.PNJGroup.add(sprite);
         this.game.physics.enable(sprite, Phaser.Physics.ARCADE);
@@ -224,7 +267,7 @@ Terrain.prototype.ballHitPNJ = function(ball, pnj) {
 
     this.game.paused = true;
     this.hited_pnj = pnj;
-    
+    // On retourne le pnj percuté par la balle
     return this.hited_pnj;
-   // this.game.state.start('qte', true, true, { qte : pnj.qte });
+   
 }
