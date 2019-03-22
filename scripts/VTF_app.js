@@ -5,7 +5,9 @@ const game = new Phaser.Game(
     'game-root',
 );
 
+game.state.add('accueil', Accueil);
 game.state.add('terrain', Terrain);
-game.state.add('qte', QTE);
+//game.state.add('qte', QTE);
 
-game.state.start('terrain');
+game.state.start('accueil');
+//me.state.start('terrain');

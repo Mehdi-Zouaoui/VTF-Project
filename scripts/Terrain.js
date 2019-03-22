@@ -13,6 +13,8 @@ function Terrain() {
     this.hited_tab = [];
     this.pointeur = 0;
     this.swipe = null;
+    this.but = 0;
+    this.score = 0;
     this.ball = {
 
 
@@ -27,44 +29,59 @@ function Terrain() {
     this.lvl_done = 0;
     // Niveaux du jeu 
     this.levels = [
-        /* [
-              { joueur : 'pnj_1', vitesse : 100, qte : 'circle' },
-          ],*/
-        [
-            { joueur: 'pnj_1', vitesse: 100, qte: 'circle' },
-            { joueur: 'pnj_2', vitesse: 100, qte: 'swipe' },
-        ],
-        [
-            { joueur: 'pnj_3', vitesse: 120, qte: 'circle' },
-            { joueur: 'pnj_4', vitesse: 120, qte: 'keyTap' },
-        ],
-        [
-            { joueur: 'pnj_3', vitesse: 110, qte: 'circle' },
-            { joueur: 'pnj_4', vitesse: 150, qte: 'keyTap' },
-            { joueur: 'pnj_2', vitesse: 120, qte: 'circle' },
+        
+             [
+                  { joueur : 'pnj_1', vitesse : 100, qte : 'circle' },
+              ],
+             [
+                  { joueur : 'pnj_1', vitesse : 100, qte : 'circle' },
+                  { joueur : 'pnj_2', vitesse : 100, qte : 'swipe' },
+              ],
+              [
+                  { joueur : 'pnj_3', vitesse : 120, qte : 'circle' },
+                  { joueur : 'pnj_4', vitesse : 120, qte : 'keyTap' },
+              ],
+              [
+                  { joueur : 'pnj_3', vitesse : 110, qte : 'circle' },
+                  { joueur : 'pnj_4', vitesse : 150, qte : 'keyTap' },
+                  { joueur : 'pnj_2', vitesse : 120, qte : 'circle' },
 
-        ],
-        [
-            { joueur: 'pnj_3', vitesse: 110, qte: 'circle' },
-            { joueur: 'pnj_4', vitesse: 160, qte: 'keyTap' },
-            { joueur: 'pnj_1', vitesse: 130, qte: 'circle' },
-            { joueur: 'pnj_2', vitesse: 140, qte: 'keyTap' },
-        ],
-        [
-            { joueur: 'pnj_3', vitesse: 120, qte: 'circle' },
-            { joueur: 'pnj_4', vitesse: 120, qte: 'keyTap' },
-        ],
-        [
-            { joueur: 'pnj_3', vitesse: 180, qte: 'circle' },
-            { joueur: 'pnj_1', vitesse: 150, qte: 'keyTap' },
-        ],
-        [
-            { joueur: 'pnj_3', vitesse: 120, qte: 'circle' },
-            { joueur: 'pnj_4', vitesse: 120, qte: 'keyTap' },
-            { joueur: 'pnj_1', vitesse: 200, qte: 'circle' },
-            { joueur: 'pnj_2', vitesse: 200, qte: 'keyTap' },
-        ],
-    ];
+              ],
+              [
+                  { joueur : 'pnj_3', vitesse : 110, qte : 'circle' },
+                  { joueur : 'pnj_4', vitesse : 160, qte : 'keyTap' },
+                  { joueur : 'pnj_1', vitesse : 130, qte : 'swipe' },
+                  { joueur : 'pnj_2', vitesse : 140, qte : 'keyTap' },
+              ],
+              [
+                  { joueur : 'pnj_3', vitesse : 200, qte : 'circle' },
+                  { joueur : 'pnj_4', vitesse : 190, qte : 'keyTap' },
+              ],
+              [
+                  { joueur : 'pnj_3', vitesse : 380, qte : 'circle' },
+                  { joueur : 'pnj_1', vitesse : 150, qte : 'keyTap' },
+              ],
+              [
+                  { joueur : 'pnj_3', vitesse : 120, qte : 'circle' },
+                  { joueur : 'pnj_4', vitesse : 140, qte : 'swipe' },
+                  { joueur : 'pnj_1', vitesse : 150, qte : 'circle' },
+                  { joueur : 'pnj_2', vitesse : 180, qte : 'keyTap' },
+              ],
+
+              [
+                  { joueur : 'pnj_3', vitesse : 120, qte : 'circle' },
+                  { joueur : 'pnj_4', vitesse : 120, qte : 'keyTap' },
+                  { joueur : 'pnj_1', vitesse : 200, qte : 'circle' },
+                  { joueur : 'pnj_2', vitesse : 200, qte : 'swipe' },
+              ],
+
+              [
+                  { joueur : 'pnj_3', vitesse : 129, qte : 'circle' },
+                  { joueur : 'pnj_4', vitesse : 120, qte : 'keyTap' },
+                  { joueur : 'pnj_1', vitesse : 200, qte : 'swipe' },
+                  { joueur : 'pnj_2', vitesse : 200, qte : 'keyTap' },
+              ],
+          ];
 
     //this.onPausedCallback = function() { console.log('PAUSED')}
 }
@@ -108,6 +125,8 @@ Terrain.prototype.create = function () {
     this.timerText = this.game.add.text(50, 5, 'Temps: 0.0m', { font: '18px Arial', fill: '#ffff00' });
     setInterval(() => this.timer += 20, 20);
 
+    // Score 
+    this.scoreText = this.game.add.text(50, 30, 'Score:' + this.score , { font: '18px Arial', fill: '#ffff00' });
 
 
     //this.counterLoop.position.x -= 1;
@@ -272,6 +291,8 @@ Terrain.prototype.create = function () {
     this.game.state.onResumedCallback = () => {
         console.log('TERRAIN PLAY AGAIN!')
         // Supression du conteur 
+        this.score += 100;
+        this.scoreText.setText("Score : " + this.score);
         this.text.kill();
         this.counter_keyTap = 0;
         this.counter_swipe = 0;
@@ -289,6 +310,9 @@ Terrain.prototype.create = function () {
 
         if (this.levels[this.lvl_done].length == this.hited_tab.length) {
             //console.log(this.levels[this.lvl_done].joueur)
+            
+            
+            this.score += 1000;
             this.hited_tab = [];
             this.pointeur = 0;
             this.lvl_done += 1;
@@ -300,14 +324,38 @@ Terrain.prototype.create = function () {
 
 
 Terrain.prototype.update = function () {
+
     // Ecoute des collisions entre la balle et les joueurs
     this.game.physics.arcade.collide(this.ball, this.PNJGroup, this.ballHitPNJ.bind(this));
 
     // Ecoute si un joueur atteint le bas de l'écran ==> le visiteur perd un point
     this.PNJGroup.forEach(item => {
         if (item.position.y + item.height > window.innerHeight) {
+
+            console.log('LOOSERE')
             // @todo : faire perdre un point
-            // score --;
+            this.but +=1
+            //this.score -= 500;
+            this.scoreText.setText("Score"+ this.score);
+            item.body = undefined;
+            item.kill();  
+            this.initLevel(this.lvl_done);
+
+            // for (let i = 0; i < this.PNJGroup.length; i++) {
+            //     if (this.PNJGroup[i] === item) {
+            //         this.PNJGroup.sprite(i, 1);
+            //     }
+            // }
+
+            // if (this.PNJGroup.length === 0) {
+            //     console.log('PERRDU !')
+            //     this.PNJGroup.destroy();
+            //     this.PNJGroup = game.add.physicsGroup();;
+            // }
+           
+           
+
+
         }
     });
 
@@ -356,6 +404,7 @@ Terrain.prototype.initLevel = function (lvl) {
         sprite.body.velocity.y = this.levels[lvl][x].vitesse;
         sprite.body.movable = true;
         sprite.qte = this.levels[lvl][x].qte;
+        
     }
 }
 
